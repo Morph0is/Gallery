@@ -1,3 +1,4 @@
+// ImageUploaderUI.java
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -39,19 +40,37 @@ public class ImageUploaderUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String imagePath = imagePathTextField.getText();
+                String imageName = extractImageName(imagePath);
                 String description = descriptionTextArea.getText();
-                // Hier wird der Code zum Hochladen des Bildes in die Datenbank aufgerufen
+                // Erstellen Sie eine neue Instanz von BildInMySQL_Einfuegen
+                new BildInMySQL_Einfuegen(imagePath,imageName,description);
+            }
+        });
+
+        descriptionLabel = new JLabel("Beschreibung:");
+        descriptionTextArea = new JTextArea(3, 20);
+
+        uploadButton = new JButton("Hochladen");
+        uploadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String imagePath = imagePathTextField.getText();
+                String imageName = extractImageName(imagePath);
+                String description = descriptionTextArea.getText();
+                // Rufen Sie die Methode bildInDatenbankSpeichern auf
+                new BildInMySQL_Einfuegen(imagePath,imageName,description);
             }
         });
 
         // Komponenten zum Fenster hinzufügen
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(2, 2));
+        inputPanel.setLayout(new GridLayout(3, 2));
         inputPanel.add(imagePathLabel);
         inputPanel.add(imagePathTextField);
         inputPanel.add(chooseImageButton);
         inputPanel.add(descriptionLabel);
-        inputPanel.add(descriptionTextArea);
+        JScrollPane scrollPane = new JScrollPane(descriptionTextArea);
+        inputPanel.add(scrollPane);
 
         add(inputPanel, BorderLayout.CENTER);
         add(uploadButton, BorderLayout.SOUTH);
@@ -68,6 +87,11 @@ public class ImageUploaderUI extends JFrame {
             imagePathTextField.setText(selectedFile.getAbsolutePath());
         }
     }
+    private String extractImageName(String imagePath) {
+        File file = new File(imagePath);
+        return file.getName();
+    }
+
 
     public static void main(String[] args) {
         new ImageUploaderUI();
