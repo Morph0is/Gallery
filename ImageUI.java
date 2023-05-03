@@ -55,6 +55,8 @@ public class ImageUI {
         lstImageNames = new JList<>();
         refreshImageList();
         lstImageNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+
         lstImageNames.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
@@ -63,7 +65,13 @@ public class ImageUI {
                     if (imageData != null) {
                         try {
                             BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
-                            ImageIcon imageIcon = new ImageIcon(image);
+
+                            // Skalieren Sie das Bild, um es an das Programmfenster anzupassen
+                            int width = lblImage.getWidth();
+                            int height = lblImage.getHeight();
+                            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+                            ImageIcon imageIcon = new ImageIcon(scaledImage);
                             lblImage.setIcon(imageIcon);
                         } catch (IOException ex) {
                             ex.printStackTrace();
@@ -75,6 +83,7 @@ public class ImageUI {
                 }
             }
         });
+
 
         JScrollPane listScrollPane = new JScrollPane(lstImageNames);
 
