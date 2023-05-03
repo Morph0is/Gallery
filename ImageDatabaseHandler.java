@@ -89,5 +89,19 @@ public class ImageDatabaseHandler {
             }
         }
     }
+    public static void deleteImage(String imageName) {
+        String sql = "DELETE FROM imagetable WHERE imagename = ?";
+
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, imageName);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }
