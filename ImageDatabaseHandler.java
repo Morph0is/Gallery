@@ -12,9 +12,9 @@ import java.util.List;
 
 public class ImageDatabaseHandler {
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/imagedb";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "";
+    private static final String DB_URL = "jdbc:mysql://bnfpbzfl49ffy485x4gh-mysql.services.clever-cloud.com:3306/bnfpbzfl49ffy485x4gh?useSSL=true&serverTimezone=UTC";
+    private static final String DB_USER = "u3jf91cj3vfi46hw";
+    private static final String DB_PASSWORD = "wTiD2blNRmBU0IwrVwEG";
 
     public static void saveImage(String imageName, String imagePath) {
         String sql = "INSERT INTO imagetable (imagename, image) VALUES (?, ?)";
