@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,9 +17,11 @@ public class ImageUI {
     private JButton btnSaveImage;
     private JButton btnRefreshList;
     private JFileChooser fileChooser;
-    private JList<String> lstImageNames;
+    private JList<ImageIcon> lstImageNames;
     private JLabel lblImage;
     private JButton btnDeleteImage;
+    private List<String> imageNames;
+
 
 
 
@@ -60,8 +61,9 @@ public class ImageUI {
 
         btnDeleteImage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String selectedImageName = lstImageNames.getSelectedValue();
-                if (selectedImageName != null) {
+                int selectedIndex = lstImageNames.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    String selectedImageName = imageNames.get(selectedIndex);
                     int confirm = JOptionPane.showConfirmDialog(
                             frame,
                             "Möchten Sie das ausgewählte Bild wirklich löschen?",
@@ -81,6 +83,7 @@ public class ImageUI {
         });
 
 
+
         lstImageNames = new JList<>();
         refreshImageList();
         lstImageNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -89,29 +92,35 @@ public class ImageUI {
         lstImageNames.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
-                    String selectedImageName = lstImageNames.getSelectedValue();
-                    byte[] imageData = ImageDatabaseHandler.retrieveImageData(selectedImageName);
-                    if (imageData != null) {
-                        try {
-                            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
+                    int selectedIndex = lstImageNames.getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        String selectedImageName = imageNames.get(selectedIndex);
+                        byte[] imageData = ImageDatabaseHandler.retrieveImageData(selectedImageName);
+                        if (imageData != null) {
+                            try {
+                                BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
 
-                            // Skalieren Sie das Bild, um es an das Programmfenster anzupassen
-                            int width = lblImage.getWidth();
-                            int height = lblImage.getHeight();
-                            Image scaledImage = getScaledImageWithAspectRatio(image, width, height);
+                                int width = lblImage.getWidth();
+                                int height = lblImage.getHeight();
+                                Image scaledImage = getScaledImageWithAspectRatio(image, width, height);
 
-                            ImageIcon imageIcon = new ImageIcon(scaledImage);
-                            lblImage.setIcon(imageIcon);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
+                                ImageIcon imageIcon = new ImageIcon(scaledImage);
+                                lblImage.setIcon(imageIcon);
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     }
                 } else if (e.getClickCount() == 2) {
-                    String selectedImageName = lstImageNames.getSelectedValue();
-                    ImageDatabaseHandler.openImageWithDefaultViewer(selectedImageName);
+                    int selectedIndex = lstImageNames.getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        String selectedImageName = imageNames.get(selectedIndex);
+                        ImageDatabaseHandler.openImageWithDefaultViewer(selectedImageName);
+                    }
                 }
             }
         });
+
 
 
 
@@ -144,15 +153,33 @@ public class ImageUI {
 
         frame.setVisible(true);
     }
+    private ImageIcon createThumbnail(BufferedImage image, int maxWidth, int maxHeight) {
+        Image scaledImage = getScaledImageWithAspectRatio(image, maxWidth, maxHeight);
+        return new ImageIcon(scaledImage);
+    }
 
     private void refreshImageList() {
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-        List<String> imageNames = ImageDatabaseHandler.getAllImageNames();
+        DefaultListModel<ImageIcon> listModel = new DefaultListModel<>();
+        imageNames = ImageDatabaseHandler.getAllImageNames();
+
+        int thumbnailWidth = 100;
+        int thumbnailHeight = 100;
+
         for (String imageName : imageNames) {
-            listModel.addElement(imageName);
+            byte[] imageData = ImageDatabaseHandler.retrieveImageData(imageName);
+            if (imageData != null) {
+                try {
+                    BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
+                    ImageIcon thumbnail = createThumbnail(image, thumbnailWidth, thumbnailHeight);
+                    listModel.addElement(thumbnail);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
         lstImageNames.setModel(listModel);
     }
+
 
     private Image getScaledImageWithAspectRatio(BufferedImage image, int maxWidth, int maxHeight) {
         double originalWidth = image.getWidth();
