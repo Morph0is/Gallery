@@ -13,7 +13,7 @@ import java.util.List;
 
 
 public class ImageUI {
-    private JFrame frame;
+    private JFrame frame;   //An dieser Stelle wird das Design der GUI erstellt und die einzelnen Buttons und Funktionen werden definiert
     private JButton btnSaveImage;
     private JButton btnRefreshList;
     private JFileChooser fileChooser;
@@ -25,19 +25,32 @@ public class ImageUI {
 
 
 
-    public ImageUI() {
+    public ImageUI() // Hier wird die GUI erstellt
+    {
+        // Hier wird der Titel der GUI festgelegt
         frame = new JFrame("Gallery");
+        // Hier wird die Größe der GUI festgelegt
         frame.setSize(1000, 600);
+        // Hier wird festgelegt, dass die GUI geschlossen werden kann
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Hier wird der Container erstellt
         Container contentPane = frame.getContentPane();
+        // Hier wird das Layout des Containers festgelegt
         contentPane.setLayout(new BorderLayout());
 
+        // Hier wird der FileChooser erstellt
         fileChooser = new JFileChooser();
 
+        // Hier wird der Button erstellt
         btnSaveImage = new JButton("Bild Hinzufügen");
-        btnSaveImage.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        // Hier wird die Aktion des Buttons festgelegt
+        btnSaveImage.addActionListener(new ActionListener()
+        {
+            // Hier wird die Aktion des Buttons festgelegt
+            public void actionPerformed(ActionEvent e)
+            {
+                // Hier wird festgelegt, dass der FileChooser geöffnet wird
                 int returnValue = fileChooser.showOpenDialog(null);
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
@@ -48,19 +61,26 @@ public class ImageUI {
                 }
             }
         });
-
-        btnRefreshList = new JButton("Liste aktualisieren");
-        btnRefreshList.addActionListener(new ActionListener() {
+        // Hier wird der Button erstellt
+        btnRefreshList = new JButton("Liste aktualisieren"); // Hier wird der Button erstellt
+        // Hier wird die Aktion des Buttons festgelegt
+        btnRefreshList.addActionListener(new ActionListener()
+        {
+            // Hier wird die Aktion des Buttons festgelegt
             public void actionPerformed(ActionEvent e) {
                 refreshImageList();
             }
         });
-
+        // Hier wird der Button erstellt
         btnDeleteImage = new JButton("Bild löschen");
+        // Hier wird der Button erstellt
         lblImage = new JLabel();
-
-        btnDeleteImage.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        // Hier wird die Aktion des Buttons festgelegt
+        btnDeleteImage.addActionListener(new ActionListener()
+        {
+            // Hier wird die Aktion des Buttons festgelegt
+            public void actionPerformed(ActionEvent e) // Hier wird die Aktion des Buttons festgelegt
+            {
                 int selectedIndex = lstImageNames.getSelectedIndex();
                 if (selectedIndex != -1) {
                     String selectedImageName = imageNames.get(selectedIndex);
@@ -83,13 +103,16 @@ public class ImageUI {
         });
 
 
-
+        // Hier wird die Liste erstellt
         lstImageNames = new JList<>();
+        // Hier wird die Aktion der Liste festgelegt
         refreshImageList();
+        // Hier wird die Aktion der Liste festgelegt
         lstImageNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-
+        // Hier wird die Aktion der Liste festgelegt
         lstImageNames.addMouseListener(new MouseAdapter() {
+            // Hier wird die Aktion der Liste festgelegt
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
                     int selectedIndex = lstImageNames.getSelectedIndex();
@@ -123,7 +146,7 @@ public class ImageUI {
 
 
 
-
+        // Hier wird die ScrollPane erstellt
         JScrollPane listScrollPane = new JScrollPane(lstImageNames);
 
         JPanel southPanel = new JPanel();
@@ -153,17 +176,19 @@ public class ImageUI {
 
         frame.setVisible(true);
     }
+    //Diese Methode erstellt ein Thumbnail
     private ImageIcon createThumbnail(BufferedImage image, int maxWidth, int maxHeight) {
         Image scaledImage = getScaledImageWithAspectRatio(image, maxWidth, maxHeight);
         return new ImageIcon(scaledImage);
     }
 
+    // Diese Methode aktualisiert die Liste
     private void refreshImageList() {
         DefaultListModel<ImageIcon> listModel = new DefaultListModel<>();
         imageNames = ImageDatabaseHandler.getAllImageNames();
 
-        int thumbnailWidth = 100;
-        int thumbnailHeight = 100;
+        int thumbnailWidth = 150;
+        int thumbnailHeight = 150;
 
         for (String imageName : imageNames) {
             byte[] imageData = ImageDatabaseHandler.retrieveImageData(imageName);
@@ -177,10 +202,11 @@ public class ImageUI {
                 }
             }
         }
+        //Aufruf der des Models
         lstImageNames.setModel(listModel);
     }
 
-
+    // Diese Methode skaliert das Bild
     private Image getScaledImageWithAspectRatio(BufferedImage image, int maxWidth, int maxHeight) {
         double originalWidth = image.getWidth();
         double originalHeight = image.getHeight();
@@ -192,7 +218,7 @@ public class ImageUI {
         return image.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
     }
 
-
+    // Diese Methode erstellt das Fenster
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {

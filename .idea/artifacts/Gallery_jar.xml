@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Gallery:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Gallery_jar</output-path>
+    <root id="archive" name="Gallery.jar">
+      <element id="module-output" name="Gallery" />
+      <element id="extracted-dir" path="$USER_HOME$/OneDrive/Desktop/javaJar/mysql-connector-j-8.0.32.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
